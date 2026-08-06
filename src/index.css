@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html[data-font-size="1"] {
+    font-size: 110%;
+  }
+  html[data-font-size="2"] {
+    font-size: 125%;
+  }
+
+  html.high-contrast-mode {
+    --bg-color: #000000 !important;
+    --text-color: #ffff00 !important;
+  }
+  html.high-contrast-mode body,
+  html.high-contrast-mode main,
+  html.high-contrast-mode div,
+  html.high-contrast-mode section {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+    border-color: #ffff00 !important;
+  }
+  html.high-contrast-mode h1,
+  html.high-contrast-mode h2,
+  html.high-contrast-mode h3,
+  html.high-contrast-mode p,
+  html.high-contrast-mode span,
+  html.high-contrast-mode button,
+  html.high-contrast-mode a,
+  html.high-contrast-mode svg {
+    color: #ffff00 !important;
+  }
+  html.high-contrast-mode button,
+  html.high-contrast-mode input,
+  html.high-contrast-mode textarea {
+    background-color: #000000 !important;
+    border: 2px solid #ffff00 !important;
+    color: #ffff00 !important;
+  }
+
+  *:focus-visible {
+    outline: 4px solid #34d399 !important;
+    outline-offset: 4px !important;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+  }
+}

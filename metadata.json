@@ -1,0 +1,6 @@
+{
+  "name": "Nowy Pracownik",
+  "description": "Profesjonalny portal łączący osoby z niepełnosprawnościami szukające pracy w różnych branżach z pracodawcami, którzy cenią kompetencje i zyskują na zatrudnieniu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
