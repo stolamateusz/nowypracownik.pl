@@ -46,6 +46,13 @@
     outline: 4px solid #34d399 !important;
     outline-offset: 4px !important;
   }
+
+  html.dyslexia-font {
+    font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+  }
+  html.dyslexia-font * {
+    font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+  }
 }
 
 @layer utilities {

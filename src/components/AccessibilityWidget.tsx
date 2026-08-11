@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Type, Settings2, Moon, Eye, ZoomIn, ZoomOut } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Type, Settings2, Moon, Eye, ZoomIn, ZoomOut, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function AccessibilityWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [fontSize, setFontSize] = useState(0); // 0, 1, 2
   const [highContrast, setHighContrast] = useState(false);
+  const [dyslexiaFont, setDyslexiaFont] = useState(false);
+  const [isReading, setIsReading] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-font-size', fontSize.toString());
@@ -19,6 +21,44 @@ export function AccessibilityWidget() {
     }
   }, [highContrast]);
 
+  useEffect(() => {
+    if (dyslexiaFont) {
+      document.documentElement.classList.add('dyslexia-font');
+    } else {
+      document.documentElement.classList.remove('dyslexia-font');
+    }
+  }, [dyslexiaFont]);
+
+  const handleReadScreen = useCallback(() => {
+    if (!('speechSynthesis' in window)) {
+      alert('Twoja przeglądarka nie obsługuje czytania tekstu.');
+      return;
+    }
+
+    if (isReading) {
+      window.speechSynthesis.cancel();
+      setIsReading(false);
+      return;
+    }
+
+    const textToRead = document.body.innerText;
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    utterance.lang = 'pl-PL';
+    utterance.rate = 0.9;
+    
+    utterance.onend = () => setIsReading(false);
+    
+    window.speechSynthesis.speak(utterance);
+    setIsReading(true);
+  }, [isReading]);
+
+  // Clean up speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
   const increaseFontSize = () => setFontSize(prev => Math.min(prev + 1, 2));
   const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 1, 0));
 
@@ -30,7 +70,7 @@ export function AccessibilityWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="absolute bottom-16 left-0 bg-zinc-900 border border-zinc-700 rounded-2xl p-4 shadow-2xl mb-4 w-72 backdrop-blur-xl"
+            className="absolute bottom-16 left-0 bg-zinc-900 border border-zinc-700 rounded-2xl p-4 shadow-2xl mb-4 w-72 backdrop-blur-xl max-h-[80vh] overflow-y-auto custom-scrollbar"
           >
             <h3 className="text-white font-bold mb-4 text-lg border-b border-zinc-800 pb-2">Ułatwienia dostępu</h3>
             
@@ -66,6 +106,30 @@ export function AccessibilityWidget() {
                 >
                   <Eye className="w-5 h-5" />
                   {highContrast ? 'Wyłącz wysoki kontrast' : 'Włącz wysoki kontrast'}
+                </button>
+              </div>
+
+              <div>
+                <p className="text-zinc-400 text-sm mb-2 font-medium">Czytelność</p>
+                <button 
+                  onClick={() => setDyslexiaFont(!dyslexiaFont)}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors border mb-2 ${dyslexiaFont ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-bold' : 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700'}`}
+                  aria-pressed={dyslexiaFont}
+                >
+                  <Type className="w-5 h-5" />
+                  Czcionka dla dyslektyków
+                </button>
+              </div>
+
+              <div>
+                <p className="text-zinc-400 text-sm mb-2 font-medium">Czytnik ekranu</p>
+                <button 
+                  onClick={handleReadScreen}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors border ${isReading ? 'bg-violet-500/20 text-violet-400 border-violet-500/50 font-bold' : 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700'}`}
+                  aria-pressed={isReading}
+                >
+                  {isReading ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  {isReading ? 'Zatrzymaj czytanie' : 'Czytaj na głos'}
                 </button>
               </div>
             </div>

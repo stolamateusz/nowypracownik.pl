@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, Calendar, Wallet, Heart, Users } from 'lucide-react';
+import { ChevronDown, Calendar, Wallet, Heart, Users, Search, MapPin, Briefcase, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { jobs } from '../data/jobs';
 import { useJobInterests } from '../context/JobInterestContext';
@@ -115,29 +115,118 @@ const JobCard: React.FC<{ job: typeof jobs[0] }> = ({ job }) => {
 }
 
 export function JobOffers() {
-  return (
-    <section id="oferty" className="py-24 bg-zinc-950">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 font-medium text-sm mb-4 border border-emerald-500/20 uppercase tracking-wider">
-            Aktualne rekrutacje
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-            Znajdź stanowisko dla siebie
-          </h2>
-          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-            Przejrzyj nasze oferty pracy. Zapewniamy pełne wsparcie wdrożeniowe, niezbędny sprzęt oraz przejrzyste warunki zatrudnienia.
-          </p>
-        </div>
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedIndustry, setSelectedIndustry] = useState<string>('Wszystkie');
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
-        <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 pb-4 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900 custom-scrollbar relative">
-          {jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))}
-        </div>
+  const industries = ['Wszystkie', ...Array.from(new Set(jobs.map(j => j.industry)))];
+
+  const filteredJobs = useMemo(() => {
+    return jobs.filter(job => {
+      const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            job.industry.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesIndustry = selectedIndustry === 'Wszystkie' || job.industry === selectedIndustry;
+      return matchesSearch && matchesIndustry;
+    });
+  }, [searchTerm, selectedIndustry]);
+
+  return (
+    <section id="oferty" className="py-12 bg-zinc-950 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="mt-6 text-center text-sm text-zinc-500 flex items-center justify-center gap-2">
-          <span>Przewiń listę, aby zobaczyć więcej ofert</span>
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Sidebar Filters */}
+          <div className="lg:w-1/3 xl:w-1/4 shrink-0">
+            <div className="sticky top-24 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+              
+              <div className="flex items-center justify-between lg:hidden mb-4">
+                <h3 className="text-xl font-bold text-white">Filtry</h3>
+                <button onClick={() => setShowFiltersMobile(!showFiltersMobile)} className="text-zinc-400 hover:text-white">
+                  <Filter className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className={`${showFiltersMobile ? 'block' : 'hidden'} lg:block space-y-8`}>
+                {/* Search */}
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-2">Szukaj stanowiska</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                    <input 
+                      type="text" 
+                      placeholder="np. Księgowy..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Industry Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-3">Branża</label>
+                  <div className="space-y-2">
+                    {industries.map(industry => (
+                      <label key={industry} className="flex items-center gap-3 cursor-pointer group">
+                        <div className="relative flex items-center justify-center w-5 h-5">
+                          <input 
+                            type="radio" 
+                            name="industry"
+                            checked={selectedIndustry === industry}
+                            onChange={() => setSelectedIndustry(industry)}
+                            className="peer appearance-none w-5 h-5 border border-zinc-700 rounded bg-zinc-950 checked:bg-emerald-500 checked:border-emerald-500 transition-colors cursor-pointer"
+                          />
+                          <div className="absolute opacity-0 peer-checked:opacity-100 pointer-events-none text-zinc-950">
+                            <svg className="w-3 h-3" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M1 5L4.5 8.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                        </div>
+                        <span className="text-zinc-300 group-hover:text-white transition-colors">{industry}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mock filters for visual completeness */}
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-3">Lokalizacja</label>
+                  <div className="space-y-2">
+                    {['Zdalnie', 'Warszawa', 'Kraków', 'Wrocław', 'Poznań'].map(loc => (
+                      <label key={loc} className="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" className="appearance-none w-5 h-5 border border-zinc-700 rounded bg-zinc-950 checked:bg-zinc-700 transition-colors cursor-pointer" />
+                        <span className="text-zinc-500 group-hover:text-zinc-400 transition-colors">{loc}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          {/* Job Listings Main Column */}
+          <div className="lg:w-2/3 xl:w-3/4">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">Znalezione oferty ({filteredJobs.length})</h2>
+            </div>
+            
+            <div className="space-y-4 max-h-[1000px] overflow-y-auto pr-2 pb-4 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900 custom-scrollbar">
+              {filteredJobs.length > 0 ? (
+                filteredJobs.map((job) => (
+                  <JobCard key={job.id} job={job} />
+                ))
+              ) : (
+                <div className="text-center py-20 bg-zinc-900/50 rounded-3xl border border-zinc-800">
+                  <Search className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-2">Brak wyników</h3>
+                  <p className="text-zinc-400">Spróbuj zmienić kryteria wyszukiwania.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

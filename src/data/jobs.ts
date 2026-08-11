@@ -82,7 +82,7 @@ export const jobs = [
     ],
     whatWeOffer: [
       'Zatrudnienie w oparciu o umowę o pracę.',
-      'Niezbędny sprzęt komputerowy dostarczany kurierem.',
+      'Atrakcyjny system premiowy.',
       'Wsparcie trenera wewnętrznego.'
     ]
   },
@@ -109,7 +109,7 @@ export const jobs = [
     ],
     whatWeOffer: [
       'Pracę w 100% zdalną.',
-      'Nowoczesny sprzęt do pracy (MacBook Pro + monitor).',
+      'Dostęp do nowoczesnych narzędzi projektowych.',
       'Elastyczne godziny pracy.'
     ]
   },

@@ -50,7 +50,7 @@ export function ApplicationForm() {
                 </div>
                 <div>
                   <h4 className="text-white font-medium text-lg">Ewentualna oferta i wdrożenie</h4>
-                  <p className="text-zinc-500">W przypadku pozytywnej decyzji podpisujemy umowę, wysyłamy sprzęt i rozpoczynamy szkolenie.</p>
+                  <p className="text-zinc-500">W przypadku pozytywnej decyzji podpisujemy umowę i rozpoczynamy szkolenie.</p>
                 </div>
               </div>
             </div>

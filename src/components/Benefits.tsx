@@ -14,8 +14,8 @@ const benefits = [
   },
   {
     icon: Laptop,
-    title: 'Sprzęt Służbowy',
-    description: 'Dostarczamy kompletny zestaw do pracy: komputer, słuchawki oraz niezbędne oprogramowanie.'
+    title: 'Stabilne Zatrudnienie',
+    description: 'Oferujemy legalne, przejrzyste warunki współpracy na podstawie umowy.'
   },
   {
     icon: HeartHandshake,
